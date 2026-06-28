@@ -54,7 +54,7 @@ func (r *MongoGearRepository) FindAll(ctx context.Context) ([]domain.Gear, error
 	return gears, nil
 }
 
-func (r *MongoGearRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Gear, error) {
+func (r *MongoGearRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.Gear, error) {
 
 	var gear domain.Gear
 

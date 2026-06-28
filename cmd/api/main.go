@@ -5,6 +5,7 @@ import (
 
 	"gear-priority-api/internal/config"
 	"gear-priority-api/internal/repository/mongodb"
+	"gear-priority-api/internal/service"
 
 	"log"
 )
@@ -12,11 +13,15 @@ import (
 func main() {
 	cfg, err := config.LoadConfig()
 
+	client, _ := mongodb.New(cfg.MongoURI, cfg.MongoDatabase)
+
+	repository := mongodb.NewGearRepository(client)
+
+	service := service.NewGearService(repository)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	client, err := mongodb.New(cfg.MongoURI, cfg.MongoDatabase)
 
 	if err != nil {
 		log.Fatal(err)
