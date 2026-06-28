@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
+	router "gear-priority-api/internal/Controller"
 	"gear-priority-api/internal/config"
+	"gear-priority-api/internal/handler"
 	"gear-priority-api/internal/repository/mongodb"
 	"gear-priority-api/internal/service"
 
@@ -27,10 +30,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	handler := handler.NewGearHandler(service)
+
+	controller := router.NewRouter(handler)
+
 	fmt.Println("Gear Priority API")
 	fmt.Printf("Port: %s\n", cfg.Port)
 	fmt.Printf("Mongo URI: %s\n", cfg.MongoURI)
 
 	log.Printf("Successfully connected to MongoDB!")
 	log.Printf("Database: %s\n", client.DB.Name())
+
+	log.Fatal(http.ListenAndServe(":"+cfg.Port, controller))
 }

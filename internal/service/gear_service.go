@@ -3,8 +3,6 @@ package service
 import (
 	"context"
 	"gear-priority-api/internal/domain"
-
-	"github.com/google/uuid"
 )
 
 type GearService struct {
@@ -33,7 +31,7 @@ func (s *GearService) FindAll(
 
 func (s *GearService) FindByID(
 	ctx context.Context,
-	id uuid.UUID,
+	id string,
 ) (*domain.Gear, error) {
 	return s.repository.FindByID(ctx, id)
 }
@@ -47,7 +45,7 @@ func (s *GearService) Update(
 
 func (s *GearService) Delete(
 	ctx context.Context,
-	id uuid.UUID,
+	id string,
 ) error {
 	return s.repository.Delete(ctx, id)
 }

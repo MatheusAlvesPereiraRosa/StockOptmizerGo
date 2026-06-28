@@ -54,7 +54,7 @@ func (r *MongoGearRepository) FindAll(ctx context.Context) ([]domain.Gear, error
 	return gears, nil
 }
 
-func (r *MongoGearRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.Gear, error) {
+func (r *MongoGearRepository) FindByID(ctx context.Context, id string) (*domain.Gear, error) {
 
 	var gear domain.Gear
 
@@ -90,7 +90,7 @@ func (r *MongoGearRepository) Update(ctx context.Context, gear *domain.Gear) err
 
 func (r *MongoGearRepository) Delete(
 	ctx context.Context,
-	id uuid.UUID,
+	id string,
 ) error {
 	_, err := r.collection.DeleteOne(
 		ctx,
