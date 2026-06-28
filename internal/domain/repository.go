@@ -11,4 +11,5 @@ type GearRepository interface {
 
 	FindByID(ctx context.Context, id string) (*Gear, error)
 	FindAll(ctx context.Context) ([]Gear, error)
+	FindByCategory(ctx context.Context, category string) ([]Gear, error)
 }

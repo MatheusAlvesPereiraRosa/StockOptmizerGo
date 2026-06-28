@@ -12,7 +12,13 @@ func NewRouter(handler *handler.GearHandler) *chi.Mux {
 	r.Route("/gears", func(r chi.Router) {
 		r.Get("/", handler.FindAll)
 
+		r.Get("/{id}", handler.FindByID)
+
 		r.Post("/", handler.Create)
+
+		r.Put("/{id}", handler.Update)
+
+		r.Delete("/{id}", handler.Delete)
 	})
 
 	return r

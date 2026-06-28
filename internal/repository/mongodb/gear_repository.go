@@ -71,6 +71,29 @@ func (r *MongoGearRepository) FindByID(ctx context.Context, id string) (*domain.
 	return &gear, nil
 }
 
+func (r *MongoGearRepository) FindByCategory(
+	ctx context.Context,
+	category string,
+) ([]domain.Gear, error) {
+	cursor, err := r.collection.Find(ctx, bson.M{
+		"category": category,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var gears []domain.Gear
+
+	if err := cursor.All(ctx, &gears); err != nil {
+		return nil, err
+	}
+
+	return gears, nil
+}
+
 func (r *MongoGearRepository) Update(ctx context.Context, gear *domain.Gear) error {
 
 	_, err := r.collection.UpdateByID(

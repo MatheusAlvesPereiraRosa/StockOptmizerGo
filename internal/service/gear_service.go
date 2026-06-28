@@ -36,6 +36,13 @@ func (s *GearService) FindByID(
 	return s.repository.FindByID(ctx, id)
 }
 
+func (s *GearService) FindByCategory(
+	ctx context.Context,
+	category string,
+) ([]domain.Gear, error) {
+	return s.repository.FindByCategory(ctx, category)
+}
+
 func (s *GearService) Update(
 	ctx context.Context,
 	gear *domain.Gear,
