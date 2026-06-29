@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	router "gear-priority-api/internal/Controller"
 	"gear-priority-api/internal/config"
+	"gear-priority-api/internal/controller"
 	"gear-priority-api/internal/handler"
 	"gear-priority-api/internal/repository/mongodb"
 	"gear-priority-api/internal/service"
@@ -26,13 +26,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	handler := handler.NewGearHandler(service)
 
-	controller := router.NewRouter(handler)
+	controller := controller.NewRouter(handler)
 
 	fmt.Println("Gear Priority API")
 	fmt.Printf("Port: %s\n", cfg.Port)

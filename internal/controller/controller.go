@@ -1,4 +1,4 @@
-package router
+package controller
 
 import (
 	"gear-priority-api/internal/handler"
