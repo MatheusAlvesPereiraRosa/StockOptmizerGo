@@ -1,4 +1,4 @@
-package domain
+package response
 
 import (
 	"encoding/json"
@@ -6,9 +6,9 @@ import (
 )
 
 type Response struct {
-	Message string `json:"message,omitempty"`
-	Data interface{} `json:"data,omitempty"`
-	Error string `json:"error,omitempty"`
+	Message string      `json:"message,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
+	Error   string      `json:"error,omitempty"`
 }
 
 func JSON(w http.ResponseWriter, status int, message string, data interface{}, err string) {
@@ -17,7 +17,7 @@ func JSON(w http.ResponseWriter, status int, message string, data interface{}, e
 
 	json.NewEncoder(w).Encode(Response{
 		Message: message,
-		Data: data,
+		Data:    data,
 	})
 }
 
