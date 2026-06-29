@@ -15,16 +15,22 @@ func CalculatePriority(
 	expectedConsumption := gear.AverageDailySales *
 		float64(gear.LeadTimeInDays)
 
+	println(gear.Name, "Consumo esperado: ", expectedConsumption)
+
 	projectedStock := float64(gear.CurrentStock) -
 		expectedConsumption
 
-	if projectedStock >= float64(gear.MinimumStock) {
+	println(gear.Name, "Estoque projetado: ", projectedStock, gear.CurrentStock, expectedConsumption)
+
+	if projectedStock > float64(gear.MinimumStock) {
 		return dto.PriorityCandidate{}, false
 	}
 
 	urgencyScore :=
 		(float64(gear.MinimumStock) - projectedStock) *
 			float64(gear.CriticalityLevel)
+
+	println(gear.Name, "Nivel de urgência: ", urgencyScore)
 
 	return dto.PriorityCandidate{
 		RestockPriority: dto.RestockPriority{
@@ -78,6 +84,7 @@ func calculatePriorities(
 		}
 	}
 
+	/* Sort the priorities based on the urgency score, criticality level, average daily sales, and name. */
 	sortPriorities(priorities)
 
 	return toDTO(priorities)

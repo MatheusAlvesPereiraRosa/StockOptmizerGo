@@ -6,9 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(handler *handler.GearHandler) *chi.Mux {
-	r := chi.NewRouter()
-
+func GearRouter(r chi.Router, handler *handler.GearHandler) {
 	r.Route("/gears", func(r chi.Router) {
 		r.Get("/", handler.FindAll)
 
@@ -20,6 +18,4 @@ func NewRouter(handler *handler.GearHandler) *chi.Mux {
 
 		r.Delete("/{id}", handler.Delete)
 	})
-
-	return r
 }
