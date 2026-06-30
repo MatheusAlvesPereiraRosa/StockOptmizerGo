@@ -1,15 +1,15 @@
 package service
 
 import (
-	"gear-priority-api/internal/domain"
 	"gear-priority-api/internal/dto"
 
+	"math"
 	"sort"
 )
 
 /* Calculate the priority computed fields based on the gear's attributes. If the projected stock is above the minimum stock, then the gear is not a candidate for restocking and will be ignored. */
 func CalculatePriority(
-	gear *domain.Gear,
+	gear *dto.Gear,
 ) (dto.PriorityCandidate, bool) {
 
 	expectedConsumption := gear.AverageDailySales *
@@ -26,9 +26,9 @@ func CalculatePriority(
 		return dto.PriorityCandidate{}, false
 	}
 
-	urgencyScore :=
-		(float64(gear.MinimumStock) - projectedStock) *
-			float64(gear.CriticalityLevel)
+	stockShortage := math.Max(0, float64(gear.MinimumStock)-projectedStock)
+
+	urgencyScore := stockShortage * float64(gear.CriticalityLevel)
 
 	println(gear.Name, "Nivel de urgência: ", urgencyScore)
 
@@ -40,6 +40,7 @@ func CalculatePriority(
 			ProjectedStock: projectedStock,
 			MinimumStock:   gear.MinimumStock,
 			UrgencyScore:   urgencyScore,
+			StockShortage:  stockShortage,
 		},
 		CriticalityLevel:  gear.CriticalityLevel,
 		AverageDailySales: gear.AverageDailySales,
@@ -71,7 +72,7 @@ func sortPriorities(priorities []dto.PriorityCandidate) {
 }
 
 func calculatePriorities(
-	gears []domain.Gear,
+	gears []dto.Gear,
 ) []dto.RestockPriority {
 	priorities := make([]dto.PriorityCandidate, 0)
 

@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"gear-priority-api/internal/response"
 	"gear-priority-api/internal/service"
+	"gear-priority-api/internal/utils"
 )
 
 type RestockHandler struct {
@@ -25,7 +25,7 @@ func (h *RestockHandler) GetPriorities(
 	priorities, err := h.service.GetPriorities(r.Context())
 
 	if err != nil {
-		response.Error(
+		utils.Error(
 			w,
 			http.StatusInternalServerError,
 			err.Error(),
@@ -35,7 +35,7 @@ func (h *RestockHandler) GetPriorities(
 		return
 	}
 
-	response.JSON(
+	utils.JSON(
 		w,
 		http.StatusOK,
 		"Restock priorities calculated successfully",

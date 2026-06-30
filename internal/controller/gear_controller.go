@@ -12,6 +12,8 @@ func GearRouter(r chi.Router, handler *handler.GearHandler) {
 
 		r.Get("/{id}", handler.FindByID)
 
+		r.Get("/page", handler.FindPaginated)
+
 		r.Post("/", handler.Create)
 
 		r.Put("/{id}", handler.Update)

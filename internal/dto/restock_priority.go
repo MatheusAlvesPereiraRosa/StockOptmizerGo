@@ -9,6 +9,7 @@ type RestockPriority struct {
 	ProjectedStock float64   `json:"projectedStock"`
 	MinimumStock   int       `json:"minimumStock"`
 	UrgencyScore   float64   `json:"urgencyScore"`
+	StockShortage  float64   `json:"stockShortage"`
 }
 
 type PriorityCandidate struct {

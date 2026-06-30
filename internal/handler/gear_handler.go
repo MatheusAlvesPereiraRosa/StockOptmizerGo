@@ -3,10 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
-	"gear-priority-api/internal/domain"
-	"gear-priority-api/internal/response"
+	"gear-priority-api/internal/dto"
 	"gear-priority-api/internal/service"
+	"gear-priority-api/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 
@@ -23,8 +24,27 @@ func NewGearHandler(service *service.GearService) *GearHandler {
 	}
 }
 
+func getPaginationParams(r *http.Request) (int, int) {
+	page := 1
+	limit := 20
+
+	if value := r.URL.Query().Get("page"); value != "" {
+		if parsed, err := strconv.Atoi(value); err == nil {
+			page = parsed
+		}
+	}
+
+	if value := r.URL.Query().Get("limit"); value != "" {
+		if parsed, err := strconv.Atoi(value); err == nil {
+			limit = parsed
+		}
+	}
+
+	return page, limit
+}
+
 func (h *GearHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var gear domain.Gear
+	var gear dto.Gear
 
 	if err := json.NewDecoder(r.Body).Decode(&gear); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -33,11 +53,11 @@ func (h *GearHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.service.Create(r.Context(), &gear); err != nil {
-		response.Error(w, http.StatusInternalServerError, "Failed to create gear", err.Error())
+		utils.Error(w, http.StatusInternalServerError, "Failed to create gear", err.Error())
 		return
 	}
 
-	response.JSON(
+	utils.JSON(
 		w,
 		http.StatusCreated,
 		"Gear created successfully",
@@ -74,6 +94,52 @@ func (h *GearHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *GearHandler) FindPaginated(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	page, limit := getPaginationParams(r)
+	category := r.URL.Query().Get("category")
+
+	var (
+		result any
+		err    error
+	)
+
+	if category != "" {
+		result, err = h.service.FindByCategoryPaginated(
+			r.Context(),
+			category,
+			page,
+			limit,
+		)
+	} else {
+		result, err = h.service.FindPaginated(
+			r.Context(),
+			page,
+			limit,
+		)
+	}
+
+	if err != nil {
+		utils.Error(
+			w,
+			http.StatusInternalServerError,
+			err.Error(),
+			"",
+		)
+		return
+	}
+
+	utils.JSON(
+		w,
+		http.StatusOK,
+		"Gears found successfully",
+		result,
+		"",
+	)
+}
+
 func (h *GearHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 
 	idParam := chi.URLParam(r, "id")
@@ -81,12 +147,12 @@ func (h *GearHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	gear, err := h.service.FindByID(r.Context(), idParam)
 
 	if err != nil {
-		response.Error(w, http.StatusNotFound, "Gear not found", err.Error())
+		utils.Error(w, http.StatusNotFound, "Gear not found", err.Error())
 
 		return
 	}
 
-	response.JSON(w, http.StatusOK, "Gear found", gear, "")
+	utils.JSON(w, http.StatusOK, "Gear found", gear, "")
 }
 
 func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
@@ -96,15 +162,15 @@ func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(idParam)
 
 	if err != nil {
-		response.Error(w, http.StatusBadRequest, "Invalid UUID", err.Error())
+		utils.Error(w, http.StatusBadRequest, "Invalid UUID", err.Error())
 
 		return
 	}
 
-	var gear domain.Gear
+	var gear dto.Gear
 
 	if err := json.NewDecoder(r.Body).Decode(&gear); err != nil {
-		response.Error(w, http.StatusBadRequest, "Invalid request body", err.Error())
+		utils.Error(w, http.StatusBadRequest, "Invalid request body", err.Error())
 
 		return
 	}
@@ -114,12 +180,12 @@ func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
 	err = h.service.Update(r.Context(), &gear)
 
 	if err != nil {
-		response.Error(w, http.StatusInternalServerError, "Failed to update gear", err.Error())
+		utils.Error(w, http.StatusInternalServerError, "Failed to update gear", err.Error())
 
 		return
 	}
 
-	response.JSON(
+	utils.JSON(
 		w,
 		http.StatusOK,
 		"Gear updated successfully",
@@ -135,11 +201,11 @@ func (h *GearHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	err := h.service.Delete(r.Context(), id)
 
 	if err != nil {
-		response.Error(w, http.StatusBadRequest, "Failed to delete gear", err.Error())
+		utils.Error(w, http.StatusBadRequest, "Failed to delete gear", err.Error())
 		return
 	}
 
-	response.JSON(
+	utils.JSON(
 		w,
 		http.StatusOK,
 		"Gear deleted successfully",
