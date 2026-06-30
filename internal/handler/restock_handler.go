@@ -29,7 +29,6 @@ func (h *RestockHandler) GetPriorities(
 			w,
 			http.StatusInternalServerError,
 			err.Error(),
-			"",
 		)
 
 		return
@@ -40,6 +39,5 @@ func (h *RestockHandler) GetPriorities(
 		http.StatusOK,
 		"Restock priorities calculated successfully",
 		priorities,
-		"",
 	)
 }

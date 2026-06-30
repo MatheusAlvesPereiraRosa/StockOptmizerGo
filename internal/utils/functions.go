@@ -12,23 +12,30 @@ func RoundMoney(value float64) float64 {
 	return math.Round(value*100) / 100
 }
 
-func JSON(w http.ResponseWriter, status int, message string, data interface{}, err string) {
+func JSON(w http.ResponseWriter, status int, message string, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	json.NewEncoder(w).Encode(dto.Response{
+	_ = json.NewEncoder(w).Encode(dto.Response{
 		Message: message,
 		Data:    data,
 	})
 }
 
-func Error(w http.ResponseWriter, status int, message string, err string) {
+func Error(w http.ResponseWriter, status int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	json.NewEncoder(w).Encode(dto.Response{
+	_ = json.NewEncoder(w).Encode(dto.Response{
 		Error: message,
 	})
+}
+
+func Pagination(w http.ResponseWriter, status int, data any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	_ = json.NewEncoder(w).Encode(data)
 }
 
 func NormalizePagination(

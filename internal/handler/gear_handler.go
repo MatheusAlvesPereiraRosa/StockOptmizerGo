@@ -53,7 +53,7 @@ func (h *GearHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.service.Create(r.Context(), &gear); err != nil {
-		utils.Error(w, http.StatusInternalServerError, "Failed to create gear", err.Error())
+		utils.Error(w, http.StatusInternalServerError, "Failed to create gear")
 		return
 	}
 
@@ -62,7 +62,6 @@ func (h *GearHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.StatusCreated,
 		"Gear created successfully",
 		gear,
-		"",
 	)
 }
 
@@ -102,7 +101,7 @@ func (h *GearHandler) FindPaginated(
 	category := r.URL.Query().Get("category")
 
 	var (
-		result any
+		result *dto.PaginatedGearsResponse
 		err    error
 	)
 
@@ -125,18 +124,15 @@ func (h *GearHandler) FindPaginated(
 		utils.Error(
 			w,
 			http.StatusInternalServerError,
-			err.Error(),
-			"",
+			"Failed to retrieve paginated gears",
 		)
 		return
 	}
 
-	utils.JSON(
+	utils.Pagination(
 		w,
 		http.StatusOK,
-		"Gears found successfully",
 		result,
-		"",
 	)
 }
 
@@ -147,12 +143,12 @@ func (h *GearHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	gear, err := h.service.FindByID(r.Context(), idParam)
 
 	if err != nil {
-		utils.Error(w, http.StatusNotFound, "Gear not found", err.Error())
+		utils.Error(w, http.StatusNotFound, "Gear not found")
 
 		return
 	}
 
-	utils.JSON(w, http.StatusOK, "Gear found", gear, "")
+	utils.JSON(w, http.StatusOK, "Gear found", gear)
 }
 
 func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
@@ -162,7 +158,7 @@ func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(idParam)
 
 	if err != nil {
-		utils.Error(w, http.StatusBadRequest, "Invalid UUID", err.Error())
+		utils.Error(w, http.StatusBadRequest, "Invalid UUID")
 
 		return
 	}
@@ -170,7 +166,7 @@ func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
 	var gear dto.Gear
 
 	if err := json.NewDecoder(r.Body).Decode(&gear); err != nil {
-		utils.Error(w, http.StatusBadRequest, "Invalid request body", err.Error())
+		utils.Error(w, http.StatusBadRequest, "Invalid request body")
 
 		return
 	}
@@ -180,7 +176,7 @@ func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
 	err = h.service.Update(r.Context(), &gear)
 
 	if err != nil {
-		utils.Error(w, http.StatusInternalServerError, "Failed to update gear", err.Error())
+		utils.Error(w, http.StatusInternalServerError, "Failed to update gear")
 
 		return
 	}
@@ -190,7 +186,6 @@ func (h *GearHandler) Update(w http.ResponseWriter, r *http.Request) {
 		http.StatusOK,
 		"Gear updated successfully",
 		gear,
-		"",
 	)
 }
 
@@ -201,7 +196,7 @@ func (h *GearHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	err := h.service.Delete(r.Context(), id)
 
 	if err != nil {
-		utils.Error(w, http.StatusBadRequest, "Failed to delete gear", err.Error())
+		utils.Error(w, http.StatusBadRequest, "Failed to delete gear")
 		return
 	}
 
@@ -210,6 +205,5 @@ func (h *GearHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.StatusOK,
 		"Gear deleted successfully",
 		nil,
-		"",
 	)
 }
