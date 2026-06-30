@@ -619,15 +619,3 @@ Os testes de prioridade verificam:
 ## Melhorias Futuras
 
 * Implementar `PATCH /gears/{id}` para atualizações parciais
-* Validar valores negativos e limites de criticidade
-* Adicionar fornecedores
-* Criar pedidos de compra
-* Criar autenticação e autorização
-* Adicionar índices no MongoDB
-* Implementar Swagger/OpenAPI
-* Criar testes de integração com MongoDB
-* Implementar paginação por cursor para coleções muito grandes
-
-## Licença
-
-Projeto criado para estudo, portfólio e experimentação de lógica de gestão de estoque automotivo.
